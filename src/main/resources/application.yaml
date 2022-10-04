@@ -1,0 +1,19 @@
+server:
+  port: 8900
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+
+oci:
+  datasource:
+    jdbc-url: jdbc:oracle:thin:@localhost:1521/XE
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: system
+    password: oracle
+    url: jdbc:oracle:thin:@localhost:1521/XE
+
+mybatis:
+  type-aliases-package: com.example.demo
+  mapper-locations: classpath:mappers/*.xml
