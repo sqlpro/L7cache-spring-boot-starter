@@ -1,14 +1,12 @@
 package com.example.demo.configuration;
 
-import com.example.demo.service.CacheMessage;
-import com.example.demo.service.RedisSubService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,19 +17,30 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import com.example.demo.service.CacheMessage;
+import com.example.demo.service.RedisSubService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 @EnableRedisRepositories
-public class RedisConfiguration {
+public class L7CacheAutoConfiguration {
 
-    private final RedisProperties redisProperties;
-    private final RedisSubService redisSubService;
+    private final L7CacheProperties l7CacheProperties;
+
+    @Value("${spring.l7cache.redis.topic:l7cache-bus}")
+    private String L7CACHE_REDIS_TOPIC;
 
     @Bean
     @ConditionalOnMissingBean(RedisTemplate.class)
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
+        String host = l7CacheProperties.getRedisHost();
+        int port = l7CacheProperties.getRedisPort();
+
+        return new LettuceConnectionFactory(host, port);
     }
 
     @Bean
@@ -44,8 +53,9 @@ public class RedisConfiguration {
         return redisTemplate;
     }
 
+    @Lazy
     @Bean
-    MessageListenerAdapter messageListenerAdapter() {
+    MessageListenerAdapter messageListenerAdapter(RedisSubService redisSubService) {
         return new MessageListenerAdapter(redisSubService);
     }
 
@@ -60,7 +70,6 @@ public class RedisConfiguration {
 
     @Bean
     public ChannelTopic topic() {
-        log.info(">>>>>>>>>>>> Topic() is called");
-        return new ChannelTopic("topic1");
+        return new ChannelTopic(L7CACHE_REDIS_TOPIC);
     }
 }

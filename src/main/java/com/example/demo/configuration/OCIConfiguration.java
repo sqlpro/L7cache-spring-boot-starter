@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 public class OCIConfiguration {
 
     @Bean
-    @ConfigurationProperties(prefix = "oci.datasource")
+    @ConfigurationProperties(prefix = "datasource")
     public DataSource dataSource() {
         return DataSourceBuilder.create().build();
     }
@@ -32,7 +32,7 @@ public class OCIConfiguration {
         return transactionManager;
     }
 
-    @Bean(name = "ociSqlSessionFactory")
+    @Bean(name = "sqlSessionFactory")
     public SqlSessionFactory sqlSessionFactory(DataSource ds, ApplicationContext ctx) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(ds);
@@ -40,7 +40,7 @@ public class OCIConfiguration {
         return sqlSessionFactoryBean.getObject();
     }
 
-    @Bean(name = "ociSqlSessionTemplate")
+    @Bean(name = "sqlSessionTemplate")
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }

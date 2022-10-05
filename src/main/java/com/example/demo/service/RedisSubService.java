@@ -4,7 +4,7 @@ import com.example.demo.controller.L7Cache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.cache2k.Cache;
+
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Service;
@@ -28,11 +28,11 @@ public class RedisSubService implements MessageListener {
             CacheMessage redisMessage = mapper.readValue(message.getBody(), CacheMessage.class);
             messageList.add(message.toString());
 
-            log.debug("Received Message: {}", message.toString());
+            log.debug("Received Message: {}", message);
             log.debug("Sender: {}", redisMessage.getSender());
             log.debug("Context: {}", redisMessage.getContext());
 
-            l7Cache.evict(redisMessage.getContext(), redisMessage.getSender());
+            l7Cache.evict(redisMessage.getContext());
         } catch (IOException e) {
             e.printStackTrace();
         }

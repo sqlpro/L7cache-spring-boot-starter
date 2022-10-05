@@ -1,69 +1,70 @@
 package com.example.demo.controller;
 
-import com.example.demo.service.CacheMessage;
-import com.example.demo.service.RedisPubService;
-import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
-import org.cache2k.CacheEntry;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
-
 import java.util.Calendar;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Component
-public class L7Cache<T> {
+import org.cache2k.Cache;
 
-    private final String cacheId = UUID.randomUUID().toString();
+import com.example.demo.service.CacheMessage;
+import com.example.demo.service.RedisPubService;
 
-    private final Cache<String, Object> cache;
-    private final AtomicInteger cacheMissCount;
-    private final Object lockObject;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
-    private final RedisPubService redisPubService;
+@Slf4j
+public final class L7Cache<T> {
 
-    public L7Cache(RedisPubService redisPubService) {
+	@Getter
+	private final String cacheInstanceId = UUID.randomUUID().toString();
 
-        this.cacheMissCount = new AtomicInteger(0);
-        this.redisPubService = redisPubService;
-        this.lockObject = new Object();
+	private final Cache<String, Object> cache;
+	private final AtomicInteger cacheMissCount;
+	private final Object lockObject;
 
-//      (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]
-        this.cache = Cache2kBuilder.of(String.class, Object.class)
-                .name("L7-CACHE")
-                .eternal(true)
-                .entryCapacity(100)
-                .expireAfterWrite(6_000, TimeUnit.MILLISECONDS)
-                .build();
-    }
+	private final RedisPubService redisPubService;
 
-    public T get(String key, L7CacheFunctionInterface<T> callback) {
-        T cachedObject = (T) this.cache.get(key);
-        synchronized (lockObject) {
-            if (Objects.isNull(cachedObject)) {
-                synchronized (lockObject) {
-                    cacheMissCount.incrementAndGet();
-                    cachedObject = callback.apply();
-                    this.cache.put(key, cachedObject);
-                }
-            }
-        }
-        return cachedObject;
-    }
+	public L7Cache(RedisPubService redisPubService, Cache<String, Object> cache) {
+		this.cache = cache;
+		this.redisPubService = redisPubService;
 
-    public void touch(String key) {
-        this.cache.expireAt(key, Calendar.getInstance().getTimeInMillis() + 600_000);
-    }
+		this.lockObject = new Object();
+		this.cacheMissCount = new AtomicInteger(0);
+	}
 
-    public void evict(String key, String sender) {
-        this.cache.remove(key);
-    }
+	public T get(String key, L7CacheFunctionInterface<T> callback) {
+		T cachedObject = (T)this.cache.get(key);
+		synchronized (lockObject) {
+			if (Objects.isNull(cachedObject)) {
+				synchronized (lockObject) {
+					cacheMissCount.incrementAndGet();
+					cachedObject = callback.apply();
+					this.cache.put(key, cachedObject);
+				}
+			}
+		}
+		return cachedObject;
+	}
 
-    public void renew(String key) {
-        // 삭제와 이벤트의 무한 루프를 방지하기 위해 직접 캐시를 삭제하지 않고, Redis에 삭제 메시지만 발행한다. 이 메시지가 도착하면 자동으로 캐시가 갱신된다.
-        this.redisPubService.sendMessage(new CacheMessage(cacheId, key));
-    }
+	/**
+	 * 캐시의 유효 기간을 연장합니다
+	 * @param key
+	 */
+	public void touch(String key) {
+		this.touch(key, 600_000);
+	}
+	public void touch(String key, long ms) {
+		this.cache.expireAt(key, Calendar.getInstance().getTimeInMillis() + ms);
+	}
+
+	public void evict(String key) {
+		log.info("{} 키에 대한 캐싱을 Evict 합니다", key);
+		this.cache.remove(key);
+	}
+
+	public void renew(String key) {
+		// 삭제와 이벤트의 무한 루프를 방지하기 위해 직접 캐시를 삭제하지 않고, Redis에 삭제 메시지만 발행한다. 이 메시지가 도착하면 자동으로 캐시가 갱신된다.
+		this.redisPubService.sendMessage(new CacheMessage(cacheInstanceId, key));
+	}
 }
