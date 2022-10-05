@@ -1,6 +1,5 @@
-package com.example.demo.service;
+package com.example.demo.l7cache;
 
-import com.example.demo.controller.L7Cache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RedisSubService implements MessageListener {
+public class L7CacheSubService implements MessageListener {
     public static List<String> messageList = new ArrayList<>();
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -25,7 +24,7 @@ public class RedisSubService implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            CacheMessage redisMessage = mapper.readValue(message.getBody(), CacheMessage.class);
+            L7CacheMessage redisMessage = mapper.readValue(message.getBody(), L7CacheMessage.class);
             messageList.add(message.toString());
 
             log.debug("Received Message: {}", message);

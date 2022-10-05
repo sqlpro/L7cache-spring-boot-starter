@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.Dept;
+import com.example.demo.l7cache.L7Cache;
 import com.example.demo.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

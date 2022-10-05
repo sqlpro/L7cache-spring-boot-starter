@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.l7cache;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CacheMessage {
+public class L7CacheMessage {
     private String sender;
     private String context;
 }

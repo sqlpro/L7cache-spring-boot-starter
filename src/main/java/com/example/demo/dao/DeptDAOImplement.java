@@ -11,7 +11,7 @@ import java.util.List;
 public class DeptDAOImplement implements DeptDao{
     private final SqlSession sqlSession;
 
-    public DeptDAOImplement(@Qualifier("ociSqlSessionTemplate") SqlSession sqlSession) {
+    public DeptDAOImplement(@Qualifier("sqlSessionTemplate") SqlSession sqlSession) {
         this.sqlSession = sqlSession;
     }
 

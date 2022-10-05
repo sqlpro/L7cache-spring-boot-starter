@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.l7cache;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -6,9 +6,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.cache2k.Cache;
-
-import com.example.demo.service.CacheMessage;
-import com.example.demo.service.RedisPubService;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +20,11 @@ public final class L7Cache<T> {
 	private final AtomicInteger cacheMissCount;
 	private final Object lockObject;
 
-	private final RedisPubService redisPubService;
+	private final L7CachePubService publishService;
 
-	public L7Cache(RedisPubService redisPubService, Cache<String, Object> cache) {
+	public L7Cache(L7CachePubService publishService, Cache<String, Object> cache) {
 		this.cache = cache;
-		this.redisPubService = redisPubService;
+		this.publishService = publishService;
 
 		this.lockObject = new Object();
 		this.cacheMissCount = new AtomicInteger(0);
@@ -65,6 +62,6 @@ public final class L7Cache<T> {
 
 	public void renew(String key) {
 		// 삭제와 이벤트의 무한 루프를 방지하기 위해 직접 캐시를 삭제하지 않고, Redis에 삭제 메시지만 발행한다. 이 메시지가 도착하면 자동으로 캐시가 갱신된다.
-		this.redisPubService.sendMessage(new CacheMessage(cacheInstanceId, key));
+		this.publishService.sendMessage(new L7CacheMessage(cacheInstanceId, key));
 	}
 }
