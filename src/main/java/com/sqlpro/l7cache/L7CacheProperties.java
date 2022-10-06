@@ -1,4 +1,4 @@
-package com.example.demo.l7cache;
+package com.sqlpro.l7cache;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

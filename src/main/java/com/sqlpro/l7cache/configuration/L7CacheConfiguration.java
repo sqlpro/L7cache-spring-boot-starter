@@ -1,8 +1,9 @@
-package com.example.demo.l7cache.configuration;
+package com.sqlpro.l7cache.configuration;
 
-import com.example.demo.l7cache.L7Cache;
-import com.example.demo.l7cache.L7CacheProperties;
-import com.example.demo.l7cache.L7CachePubService;
+import com.sqlpro.l7cache.L7Cache;
+import com.sqlpro.l7cache.L7CacheProperties;
+import com.sqlpro.l7cache.L7CachePubService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache;

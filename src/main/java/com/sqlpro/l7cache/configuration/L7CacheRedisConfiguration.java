@@ -1,8 +1,9 @@
-package com.example.demo.l7cache.configuration;
+package com.sqlpro.l7cache.configuration;
 
-import com.example.demo.l7cache.L7CacheProperties;
-import com.example.demo.l7cache.L7CacheMessage;
-import com.example.demo.l7cache.L7CacheSubService;
+import com.sqlpro.l7cache.L7CacheProperties;
+import com.sqlpro.l7cache.L7CacheMessage;
+import com.sqlpro.l7cache.L7CacheSubService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.example.demo.l7cache;
+package com.sqlpro.l7cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
