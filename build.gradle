@@ -1,4 +1,5 @@
 plugins {
+    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
     id 'java'
 }
 
@@ -18,7 +19,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
     implementation 'org.cache2k:cache2k-core:2.6.1.Final'
     implementation 'org.cache2k:cache2k-api:2.6.1.Final'
