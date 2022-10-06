@@ -4,7 +4,7 @@ plugins {
 
 group = 'com.sqlpro'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '1.8'
 
 configurations {
     compileOnly {
@@ -17,11 +17,14 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.4'
-    implementation 'org.cache2k:cache2k-base-bom:1.2.3.Final'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+    implementation 'org.cache2k:cache2k-core:2.6.1.Final'
+    implementation 'org.cache2k:cache2k-api:2.6.1.Final'
 
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.24'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
