@@ -26,19 +26,12 @@ public class L7CacheConfiguration {
     private final L7CachePubService redisPubService;
 
     @Bean
-    @ConditionalOnMissingBean(L7Cache.class)
-    Cache<String, Object> cache() {
-        return Cache2kBuilder.of(String.class, Object.class)
-                .name(l7CacheProperties.getName())
-                .eternal(l7CacheProperties.isEternal())
-                .entryCapacity(l7CacheProperties.getEntryCapacity() == -1 ? Cache2kConfig.DEFAULT_ENTRY_CAPACITY : l7CacheProperties.getEntryCapacity())
-                .expireAfterWrite(l7CacheProperties.getTtl(), TimeUnit.MILLISECONDS)
-                .build();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(L7Cache.class)
     <T> L7Cache<T> l7Cache() {
-        return new L7Cache<>(redisPubService, cache());
+        return new L7Cache<>(redisPubService, Cache2kBuilder.of(String.class, Object.class)
+            .name(l7CacheProperties.getName())
+            .eternal(l7CacheProperties.isEternal())
+            .entryCapacity(l7CacheProperties.getEntryCapacity() == -1 ? Cache2kConfig.DEFAULT_ENTRY_CAPACITY : l7CacheProperties.getEntryCapacity())
+            .expireAfterWrite(l7CacheProperties.getTtl(), TimeUnit.MILLISECONDS)
+            .build());
     }
 }

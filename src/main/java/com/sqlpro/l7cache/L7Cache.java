@@ -60,7 +60,7 @@ public final class L7Cache<T> {
 		this.cache.remove(key);
 	}
 
-	public void renew(String key) {
+	public void invalidate(String key) {
 		// 삭제와 이벤트의 무한 루프를 방지하기 위해 직접 캐시를 삭제하지 않고, Redis에 삭제 메시지만 발행한다. 이 메시지가 도착하면 자동으로 캐시가 갱신된다.
 		this.publishService.sendMessage(new L7CacheMessage(cacheInstanceId, key));
 	}
